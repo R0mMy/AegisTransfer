@@ -4,7 +4,11 @@ import com.r0mmy.AegisTransfer.account.model.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-//@Repository
-public interface AccountRepository  //extends JpaRepository<Account, Long>
-{
+import java.util.List;
+
+@Repository
+public interface AccountRepository  extends JpaRepository<Account, Long> {
+    Account getAccountById(long id);
+
+    List<Account> getAccountsByClientId(String clientId);
 }
