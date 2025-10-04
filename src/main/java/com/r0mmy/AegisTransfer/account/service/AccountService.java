@@ -5,6 +5,8 @@ import com.r0mmy.AegisTransfer.account.exception.AccountNotFoundException;
 import com.r0mmy.AegisTransfer.account.model.Account;
 import com.r0mmy.AegisTransfer.account.model.AccountTransaction;
 import com.r0mmy.AegisTransfer.account.repository.AccountRepository;
+import com.r0mmy.AegisTransfer.account.service.dto.AccountRequest;
+import com.r0mmy.AegisTransfer.account.service.dto.AccountResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,7 @@ public class AccountService {
     }
 
     // Создание нового счёта
-    private Account createAccount(String clientId, BigDecimal initBalance, String currency) {
+    public Account createAccount(String clientId, BigDecimal initBalance, String currency) {
         Account account = new Account();
 
         account.setClientId(clientId);
@@ -37,37 +39,37 @@ public class AccountService {
     }
 
     // Получение информации о счёте
-    private Account getAccount(long id) {
+    public Account getAccount(long id) {
         return accountRepository.getAccountById(id);
     }
 
     // Получение всех счетов клиента
-    private List<Account> getClientAccounts(String clientId) {
+    public List<Account> getClientAccounts(String clientId) {
         return accountRepository.getAccountsByClientId(clientId);
     }
 
     // Закрытие счёта
-   private void closeAccount(long id) {
+    public void closeAccount(long id) {
         accountRepository.getAccountById(id).setStatus(Account.AccountStatus.CLOSED);
     }
 
 
     // Пополнение счёта
-    private Account deposit(long id, BigDecimal amount) {
+    public Account deposit(long id, BigDecimal amount) {
       Account account = accountRepository.getAccountById(id);
       account.setBalance(account.getBalance().add(amount));
       return accountRepository.save(account);
     }
 
     // Списание средств
-    private Account withDraw(long id, BigDecimal amount) {
+    public Account withDraw(long id, BigDecimal amount) {
         Account account = accountRepository.getAccountById(id);
         account.setBalance(account.getBalance().subtract(amount));
         return accountRepository.save(account);
     }
 
     // Проверка достаточности средств
-    private boolean hasSufficientFunds(long accountId, BigDecimal amount) {
+    public boolean hasSufficientFunds(long accountId, BigDecimal amount) {
         Account account = accountRepository.getAccountById(accountId);
         if (amount.compareTo(BigDecimal.ZERO) >=0)
             return false;
@@ -75,7 +77,7 @@ public class AccountService {
     }
 
     // Валидация счёта (активен ли, существует ли)
-    private void validate (long accountId) {
+    public void validate (long accountId) {
         accountRepository.findById(accountId).orElseThrow(()-> new AccountNotFoundException("Счёт не найден!"));
         if (accountRepository.getAccountById(accountId).getStatus() != Account.AccountStatus.ACTIVE)
            throw new AccountBlockedException("Счёт заблокирован или закрыт");
@@ -86,6 +88,29 @@ public class AccountService {
     List<AccountTransaction> getAccountHistory(Long accountId) {
         return null;
     }
+
+
+    public Account contvertToAccount(AccountRequest accountRequest) {
+        Account account = new Account();
+
+        account.setBalance(accountRequest.getInitialBalance());
+        account.setCurrency(accountRequest.getCurrency());
+        account.setClientId(accountRequest.getClientId());
+
+        return account;
+    }
+    public AccountResponse convertToDTO(Account account) {
+        AccountResponse accountResponse = new AccountResponse();
+
+        accountResponse.setBalance(account.getBalance());
+        accountResponse.setId(account.getId());
+        accountResponse.setStatus(account.getStatus());
+        accountResponse.setCurrency(account.getCurrency());
+        accountResponse.setClientId(account.getClientId());
+
+        return accountResponse;
+    }
+
 
 
 }
