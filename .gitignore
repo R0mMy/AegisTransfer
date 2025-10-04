@@ -4,7 +4,10 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-!**src/main/resources/application.properties
+# Application configuration files
+src/main/resources/application.properties
+src/main/resources/application-*.properties
+*.properties
 
 .env
 *.env
