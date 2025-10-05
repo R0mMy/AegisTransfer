@@ -51,5 +51,21 @@ public class AccountController {
              .collect(Collectors.toList());
     }
 
+    @PostMapping("/{id}/deposit")
+    private AccountResponse deposit(@PathVariable long id, BigDecimal amount) {
+        return accountService.convertToDTO(accountService.deposit(id, amount));
+    }
+
+    @PostMapping("/{id}/withdraw")
+    private  AccountResponse withdraw(@PathVariable long id, BigDecimal amount) {
+        return accountService.convertToDTO(accountService.withDraw(id, amount));
+    }
+
+    @DeleteMapping("/{id}/close")
+    private AccountResponse closeAccount(@PathVariable long id) {
+        accountService.closeAccount(id);
+        return accountService.convertToDTO(accountService.getAccount(id));
+    }
+
 
 }

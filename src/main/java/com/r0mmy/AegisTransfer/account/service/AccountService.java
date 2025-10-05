@@ -50,7 +50,9 @@ public class AccountService {
 
     // Закрытие счёта
     public void closeAccount(long id) {
-        accountRepository.getAccountById(id).setStatus(Account.AccountStatus.CLOSED);
+        Account account = accountRepository.getAccountById(id);
+        account.setStatus(Account.AccountStatus.CLOSED);
+        accountRepository.save(account);
     }
 
 
