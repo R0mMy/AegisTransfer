@@ -6,6 +6,7 @@ import com.r0mmy.AegisTransfer.account.model.Account;
 import com.r0mmy.AegisTransfer.account.service.AccountService;
 import com.r0mmy.AegisTransfer.account.service.dto.AccountRequest;
 import com.r0mmy.AegisTransfer.account.service.dto.AccountResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping("/create")
-    private AccountResponse createAccount(@RequestBody AccountRequest accountRequest) {
+    private AccountResponse createAccount(@Valid @RequestBody AccountRequest accountRequest) {
         return accountService.convertToDTO(accountService.createAccount(accountRequest.getClientId(),
                 accountRequest.getInitialBalance(), accountRequest.getCurrency()));
     }
