@@ -43,26 +43,6 @@
 
 > Обработчик ошибок (`@ControllerAdvice`) пока не реализован — исключения падают стандартным JSON Spring Boot.
 
-## Архитектура пакетов
-com.r0mmy.AegisTransfer
-├── AegisTransferApplication.java
-├── account
-│ ├── controller/AccountController.java
-│ ├── exception/{AccountBlockedException, AccountNotFoundException, ErrorResponse}
-│ ├── model/Account.java
-│ ├── repository/AccountRepository.java
-│ └── service/
-│ ├── AccountService.java
-│ └── dto/{AccountRequest, AccountResponse, TransactionHistoryResponse}
-├── config/{KafkaConfig.java, OpenApiConfig.java} # заглушки
-└── transaction # задел на будущее (заглушки)
-├── controller/TransactionController.java
-├── exception/{DuplicateTransactionException, InsufficientFundsException}
-├── models/Transaction.java
-├── repository/TransactionRepository.java
-└── service/
-└── dto/{TransactionRequest, TransactionResponse, IdempotencyKeyHolder}
-
 
 ## Модель данных
 
