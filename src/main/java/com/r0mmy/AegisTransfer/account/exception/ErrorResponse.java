@@ -13,6 +13,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class ErrorResponse {
+    private LocalDateTime timestamp;  // когда ошибка произошла
+    private int status;               // HTTP статус код (400, 404, 500)
+    private String error;             // текст ошибки ("Bad Request", "Not Found")
+    private String message;           // человеческое описание ошибки
+    private String path;              // какой URL запрашивали
+
 
 }

@@ -80,7 +80,7 @@ public class AccountService {
 
     // Валидация счёта (активен ли, существует ли)
     public void validate (long accountId) {
-        accountRepository.findById(accountId).orElseThrow(()-> new AccountNotFoundException("Счёт не найден!"));
+        accountRepository.findById(accountId).orElseThrow(()-> new AccountNotFoundException(accountId));
         if (accountRepository.getAccountById(accountId).getStatus() != Account.AccountStatus.ACTIVE)
            throw new AccountBlockedException("Счёт заблокирован или закрыт");
 

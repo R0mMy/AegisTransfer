@@ -1,7 +1,5 @@
 package com.r0mmy.AegisTransfer.account.controller;
 
-
-
 import com.r0mmy.AegisTransfer.account.model.Account;
 import com.r0mmy.AegisTransfer.account.service.AccountService;
 import com.r0mmy.AegisTransfer.account.service.dto.AccountRequest;
@@ -9,8 +7,6 @@ import com.r0mmy.AegisTransfer.account.service.dto.AccountResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -32,6 +28,7 @@ public class AccountController {
 
     @GetMapping("/{id}")
     private AccountResponse getAccount(@PathVariable long id) {
+        accountService.validate(id);
         return accountService.convertToDTO(accountService.getAccount(id));
     }
 //    REST эндпоинты:
