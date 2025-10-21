@@ -1,5 +1,6 @@
 package com.r0mmy.AegisTransfer.account.service;
 
+import com.r0mmy.AegisTransfer.account.exception.AccountNotFoundException;
 import com.r0mmy.AegisTransfer.account.model.Account;
 import com.r0mmy.AegisTransfer.account.repository.AccountRepository;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -66,7 +68,7 @@ public class AccountServiceTest {
         expectedAccount.setCurrency(currency);
 
         //Act
-        when(accountRepository.getAccountById(id)).thenReturn(expectedAccount);
+        when(accountRepository.findById(id)).thenReturn(Optional.of(expectedAccount));
 
         //Assert
         Account result = accountService.getAccount(id);
@@ -137,13 +139,13 @@ public class AccountServiceTest {
         closedAccount.setStatus(Account.AccountStatus.CLOSED);
 
         //Act
-        when(accountRepository.getAccountById(id)).thenReturn(expectedAccount);
+        when(accountRepository.findById(id)).thenReturn(Optional.of(expectedAccount));
         when(accountRepository.save(any(Account.class))).thenReturn(closedAccount);
 
         accountService.closeAccount(id);
 
         //Assert
-        verify(accountRepository, times(1)).getAccountById(id);
+        verify(accountRepository, times(1)).findById(id);
 
         ArgumentCaptor<Account> argumentCaptor = ArgumentCaptor.forClass(Account.class);
 

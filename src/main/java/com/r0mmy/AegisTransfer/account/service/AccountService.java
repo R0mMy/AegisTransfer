@@ -8,6 +8,8 @@ import com.r0mmy.AegisTransfer.account.repository.AccountRepository;
 import com.r0mmy.AegisTransfer.account.service.dto.AccountRequest;
 import com.r0mmy.AegisTransfer.account.service.dto.AccountResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -22,7 +24,6 @@ public class AccountService {
     @Autowired
     public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
-
     }
 
     // Создание нового счёта
@@ -39,8 +40,9 @@ public class AccountService {
     }
 
     // Получение информации о счёте
+    @Cacheable( value = "account", key = "#id")
     public Account getAccount(long id) {
-        return accountRepository.getAccountById(id);
+        return accountRepository.findById(id).orElseThrow(() -> new AccountNotFoundException(id));
     }
 
     // Получение всех счетов клиента
@@ -49,30 +51,33 @@ public class AccountService {
     }
 
     // Закрытие счёта
+    @CacheEvict( value = "account", key = "#id")
     public void closeAccount(long id) {
-        Account account = accountRepository.getAccountById(id);
+        Account account = accountRepository.findById(id).orElseThrow(() -> new AccountNotFoundException(id));
         account.setStatus(Account.AccountStatus.CLOSED);
         accountRepository.save(account);
     }
 
 
     // Пополнение счёта
+    @CacheEvict( value = "account", key = "#id")
     public Account deposit(long id, BigDecimal amount) {
-      Account account = accountRepository.getAccountById(id);
+      Account account = accountRepository.findById(id).orElseThrow(() -> new AccountNotFoundException(id));
       account.setBalance(account.getBalance().add(amount));
       return accountRepository.save(account);
     }
 
     // Списание средств
+    @CacheEvict( value = "account", key = "#id")
     public Account withDraw(long id, BigDecimal amount) {
-        Account account = accountRepository.getAccountById(id);
+        Account account = accountRepository.findById(id).orElseThrow(() -> new AccountNotFoundException(id));
         account.setBalance(account.getBalance().subtract(amount));
         return accountRepository.save(account);
     }
 
     // Проверка достаточности средств
     public boolean hasSufficientFunds(long accountId, BigDecimal amount) {
-        Account account = accountRepository.getAccountById(accountId);
+        Account account = accountRepository.findById(accountId).orElseThrow(() -> new AccountNotFoundException(accountId));
         if (amount.compareTo(BigDecimal.ZERO) >=0)
             return false;
         return account.getBalance().compareTo(amount) >=0;
@@ -81,7 +86,7 @@ public class AccountService {
     // Валидация счёта (активен ли, существует ли)
     public void validate (long accountId) {
         accountRepository.findById(accountId).orElseThrow(()-> new AccountNotFoundException(accountId));
-        if (accountRepository.getAccountById(accountId).getStatus() != Account.AccountStatus.ACTIVE)
+        if (accountRepository.findById(accountId).orElseThrow(() -> new AccountNotFoundException(accountId)).getStatus() != Account.AccountStatus.ACTIVE)
            throw new AccountBlockedException("Счёт заблокирован или закрыт");
 
     }

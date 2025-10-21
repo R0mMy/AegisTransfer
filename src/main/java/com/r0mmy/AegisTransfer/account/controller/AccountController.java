@@ -50,7 +50,7 @@ public class AccountController {
     }
 
     @PostMapping("/{id}/deposit")
-    private AccountResponse deposit(@PathVariable long id, BigDecimal amount) {
+    private AccountResponse deposit(@PathVariable long id, @RequestParam BigDecimal amount) {
         return accountService.convertToDTO(accountService.deposit(id, amount));
     }
 
